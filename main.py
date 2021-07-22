@@ -20,10 +20,10 @@ async def get_account(account_id: UUID):
 @app.post("/accounts")
 async def open_account(full_name: str, email_address: str):
     try:
-        account = accounts.open_account(full_name, email_address)
+        account_id = accounts.open_account(full_name, email_address)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account_id
 
 
 @app.post("/account/{account_id}/deposit")
