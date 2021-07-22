@@ -42,10 +42,11 @@ async def deposit_funds(account_id: UUID, amount: Decimal):
 @app.post("/account/{account_id}/withdraw")
 async def withdraw_funds(account_id: UUID, amount: Decimal):
     try:
-        account = accounts.withdraw_funds(
+        accounts.withdraw_funds(
             debit_account_id=account_id,
             amount=amount,
         )
+        account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
     return account
