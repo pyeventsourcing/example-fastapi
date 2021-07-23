@@ -1,6 +1,8 @@
-from uuid import UUID
 from decimal import Decimal
+from uuid import UUID
+
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 from bankaccounts.application import BankAccounts
 
@@ -8,13 +10,21 @@ app = FastAPI()
 accounts = BankAccounts()
 
 
-@app.get("/accounts/{account_id}")
+class AccountDetails(BaseModel):
+    full_name: str
+    email_address: str
+    balance: Decimal
+    overdraft_limit: Decimal
+    is_closed: bool
+
+
+@app.get("/accounts/{account_id}", response_model=AccountDetails)
 async def get_account(account_id: UUID):
     try:
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
 @app.post("/accounts")
@@ -26,7 +36,7 @@ async def open_account(full_name: str, email_address: str):
     return account_id
 
 
-@app.post("/account/{account_id}/deposit")
+@app.post("/account/{account_id}/deposit", response_model=AccountDetails)
 async def deposit_funds(account_id: UUID, amount: Decimal):
     try:
         accounts.deposit_funds(
@@ -36,10 +46,10 @@ async def deposit_funds(account_id: UUID, amount: Decimal):
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
-@app.post("/account/{account_id}/withdraw")
+@app.post("/account/{account_id}/withdraw", response_model=AccountDetails)
 async def withdraw_funds(account_id: UUID, amount: Decimal):
     try:
         accounts.withdraw_funds(
@@ -49,10 +59,10 @@ async def withdraw_funds(account_id: UUID, amount: Decimal):
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
-@app.post("/account/{account_id}/transfer")
+@app.post("/account/{account_id}/transfer", response_model=AccountDetails)
 async def transfer_funds(account_id: UUID, to_account_id: UUID, amount: Decimal):
     try:
         accounts.transfer_funds(
@@ -63,10 +73,10 @@ async def transfer_funds(account_id: UUID, to_account_id: UUID, amount: Decimal)
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
-@app.post("/account/{account_id}/overdraft")
+@app.post("/account/{account_id}/overdraft", response_model=AccountDetails)
 async def set_overdraft_limit(account_id: UUID, limit: Decimal):
     try:
         accounts.set_overdraft_limit(
@@ -76,17 +86,17 @@ async def set_overdraft_limit(account_id: UUID, limit: Decimal):
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
-@app.post("/account/{account_id}/close")
+@app.post("/account/{account_id}/close", response_model=AccountDetails)
 async def close_account(account_id: UUID):
     try:
         accounts.close_account(account_id)
         account = accounts.get_account(account_id)
     except Exception as e:
         return {"error": e.__class__.__name__}
-    return account
+    return account.__dict__
 
 
 if __name__ == "__main__":
