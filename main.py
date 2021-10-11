@@ -9,7 +9,7 @@ accounts = BankAccounts()
 
 
 @app.get("/accounts/{account_id}")
-async def get_account(account_id: UUID):
+def get_account(account_id: UUID):
     try:
         account = accounts.get_account(account_id)
     except Exception as e:
@@ -18,7 +18,7 @@ async def get_account(account_id: UUID):
 
 
 @app.post("/accounts")
-async def open_account(full_name: str, email_address: str):
+def open_account(full_name: str, email_address: str):
     try:
         account_id = accounts.open_account(full_name, email_address)
     except Exception as e:
@@ -27,7 +27,7 @@ async def open_account(full_name: str, email_address: str):
 
 
 @app.post("/account/{account_id}/deposit")
-async def deposit_funds(account_id: UUID, amount: Decimal):
+def deposit_funds(account_id: UUID, amount: Decimal):
     try:
         accounts.deposit_funds(
             credit_account_id=account_id,
@@ -40,7 +40,7 @@ async def deposit_funds(account_id: UUID, amount: Decimal):
 
 
 @app.post("/account/{account_id}/withdraw")
-async def withdraw_funds(account_id: UUID, amount: Decimal):
+def withdraw_funds(account_id: UUID, amount: Decimal):
     try:
         accounts.withdraw_funds(
             debit_account_id=account_id,
@@ -53,7 +53,7 @@ async def withdraw_funds(account_id: UUID, amount: Decimal):
 
 
 @app.post("/account/{account_id}/transfer")
-async def transfer_funds(account_id: UUID, to_account_id: UUID, amount: Decimal):
+def transfer_funds(account_id: UUID, to_account_id: UUID, amount: Decimal):
     try:
         accounts.transfer_funds(
             debit_account_id=account_id,
@@ -67,7 +67,7 @@ async def transfer_funds(account_id: UUID, to_account_id: UUID, amount: Decimal)
 
 
 @app.post("/account/{account_id}/overdraft")
-async def set_overdraft_limit(account_id: UUID, limit: Decimal):
+def set_overdraft_limit(account_id: UUID, limit: Decimal):
     try:
         accounts.set_overdraft_limit(
             account_id=account_id,
@@ -80,7 +80,7 @@ async def set_overdraft_limit(account_id: UUID, limit: Decimal):
 
 
 @app.post("/account/{account_id}/close")
-async def close_account(account_id: UUID):
+def close_account(account_id: UUID):
     try:
         accounts.close_account(account_id)
         account = accounts.get_account(account_id)
